@@ -1,0 +1,68 @@
+name: Run Unit Tests
+
+# ---------------------------------------------------------------
+# WHEN the workflow runs (triggers)
+#
+# Basic version (Part 3) was simply:
+#     on: push
+# which runs the tests on EVERY push to ANY branch, even when only
+# a README or document changed.
+#
+# Improved version (Part 4) below reduces unnecessary runs:
+#   1. paths filter  -> only run when Python code, dependencies or
+#                       this workflow file change.
+#   2. branches      -> run on pushes to main, and on pull requests
+#                       into main (the review stage before merging).
+#   3. workflow_dispatch -> lets me start a run by hand (for demos).
+#   4. concurrency   -> if I push again while a run is still going,
+#                       the old run is cancelled so only the newest
+#                       commit gets tested.
+# ---------------------------------------------------------------
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.py"
+      - "requirements.txt"
+      - "pytest.ini"
+      - ".github/workflows/tests.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.py"
+      - "requirements.txt"
+      - "pytest.ini"
+      - ".github/workflows/tests.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ---------------------------------------------------------------
+# WHAT the workflow does
+# ---------------------------------------------------------------
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Download the repository code onto the runner
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Install Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Install pytest (listed in requirements.txt)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Run all test_*.py files; -v shows each test case ID
+      - name: Run pytest
+        run: python -m pytest -v
