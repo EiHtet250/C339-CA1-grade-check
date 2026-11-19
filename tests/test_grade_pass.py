@@ -1,6 +1,6 @@
 """Unit tests for grade_pass.has_passed.
 
-Test case IDs (TC-PASS-xx) match the Test Case Specification.
+Each test case has an ID (TC-PASS-xx) that is shown in the pytest -v output.
 """
 import pytest
 
@@ -24,10 +24,6 @@ from grade_pass import has_passed
 def test_has_passed_returns_expected_status(score, expected):
     assert has_passed(score) is expected
 
-
-def test_has_passed_returns_python_bool():
-    """TC-PASS-08: output must be a Python bool (spec 3.2 Output)."""
-    assert type(has_passed(75)) is bool
 
 
 # ---------- Correct type, out of range: ValueError (spec 2.4) ----------

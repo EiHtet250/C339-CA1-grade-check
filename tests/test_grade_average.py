@@ -1,6 +1,6 @@
 """Unit tests for grade_average.calculate_average.
 
-Test case IDs (TC-AVG-xx) match the Test Case Specification.
+Each test case has an ID (TC-AVG-xx) that is shown in the pytest -v output.
 """
 import pytest
 
