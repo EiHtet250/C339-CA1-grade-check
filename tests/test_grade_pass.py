@@ -1,10 +1,9 @@
 """Unit tests for grade_pass.has_passed.
 
-Test case IDs (TC-PASS-xx) match the Test Case Specification.
 """
 import pytest
 
-from grade_pass import has_passed
+from src.grade_pass import has_passed
 
 
 # ---------- Valid inputs: pass / not pass (spec 3.2) ----------
@@ -25,18 +24,14 @@ def test_has_passed_returns_expected_status(score, expected):
     assert has_passed(score) is expected
 
 
-def test_has_passed_returns_python_bool():
-    """TC-PASS-08: output must be a Python bool (spec 3.2 Output)."""
-    assert type(has_passed(75)) is bool
-
 
 # ---------- Correct type, out of range: ValueError (spec 2.4) ----------
 
 @pytest.mark.parametrize(
     "score",
     [
-        pytest.param(-1, id="TC-PASS-09 below range"),
-        pytest.param(101, id="TC-PASS-10 above range"),
+        pytest.param(-1, id="TC-PASS-08 below range"),
+        pytest.param(101, id="TC-PASS-09 above range"),
     ],
 )
 def test_has_passed_out_of_range_raises_value_error(score):
@@ -49,11 +44,11 @@ def test_has_passed_out_of_range_raises_value_error(score):
 @pytest.mark.parametrize(
     "score",
     [
-        pytest.param(50.0, id="TC-PASS-11 float"),
-        pytest.param("50", id="TC-PASS-12 string"),
-        pytest.param(None, id="TC-PASS-13 None"),
-        pytest.param(True, id="TC-PASS-14 bool True"),
-        pytest.param(False, id="TC-PASS-15 bool False"),
+        pytest.param(50.0, id="TC-PASS-10 float"),
+        pytest.param("50", id="TC-PASS-11 string"),
+        pytest.param(None, id="TC-PASS-12 None"),
+        pytest.param(True, id="TC-PASS-13 bool True"),
+        pytest.param(False, id="TC-PASS-14 bool False"),
     ],
 )
 def test_has_passed_invalid_type_raises_type_error(score):

@@ -14,9 +14,7 @@ name: Run Unit Tests
 #   2. branches      -> run on pushes to main, and on pull requests
 #                       into main (the review stage before merging).
 #   3. workflow_dispatch -> lets me start a run by hand (for demos).
-#   4. concurrency   -> if I push again while a run is still going,
-#                       the old run is cancelled so only the newest
-#                       commit gets tested.
+
 # ---------------------------------------------------------------
 on:
   push:
@@ -24,20 +22,14 @@ on:
     paths:
       - "**.py"
       - "requirements.txt"
-      - "pytest.ini"
       - ".github/workflows/tests.yml"
   pull_request:
     branches: [main]
     paths:
       - "**.py"
       - "requirements.txt"
-      - "pytest.ini"
       - ".github/workflows/tests.yml"
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 # ---------------------------------------------------------------
 # WHAT the workflow does
@@ -63,6 +55,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Run all test_*.py files; -v shows each test case ID
-      - name: Run pytest
-        run: python -m pytest -v
+      # 4. Run all test_*.py files in tests/; -v shows each test case ID
+      
+      - name: Run pytest  
+        run: python -m pytest -v tests
