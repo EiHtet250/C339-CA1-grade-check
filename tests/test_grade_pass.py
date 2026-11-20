@@ -1,5 +1,7 @@
 """Unit tests for grade_pass.has_passed.
 
+Each test follows Arrange / Act / Assert (AAA). The Arrange step is the
+input data supplied by @pytest.mark.parametrize.
 """
 import pytest
 
@@ -7,6 +9,16 @@ from src.grade_pass import has_passed
 
 
 # ---------- Valid inputs: pass / not pass (spec 3.2) ----------
+#
+# DEFECT DEF-02 (found by TC-PASS-04)
+#   Requirement: spec 3.2.1 - a score of 50 or more is a pass.
+#   Expected:    has_passed(50) returns True
+#   Actual:      has_passed(50) returns False
+#   Cause:       src/grade_pass.py, last line uses the wrong comparison:
+#                    return score > 50
+#                It should include the pass mark: return score >= 50
+#   Note:        TC-PASS-03 (49) and TC-PASS-05 (51) pass, so only the exact
+#                boundary value 50 exposes this defect.
 
 @pytest.mark.parametrize(
     "score, expected",
@@ -21,8 +33,11 @@ from src.grade_pass import has_passed
     ],
 )
 def test_has_passed_returns_expected_status(score, expected):
-    assert has_passed(score) is expected
-
+    # Arrange: score and expected come from the parameters above
+    # Act
+    result = has_passed(score)
+    # Assert: "is" also checks the result is a real bool (spec 3.2 Output)
+    assert result is expected
 
 
 # ---------- Correct type, out of range: ValueError (spec 2.4) ----------
@@ -35,6 +50,8 @@ def test_has_passed_returns_expected_status(score, expected):
     ],
 )
 def test_has_passed_out_of_range_raises_value_error(score):
+    # Arrange: out-of-range score comes from the parameters above
+    # Act and Assert: the call must raise ValueError
     with pytest.raises(ValueError):
         has_passed(score)
 
@@ -52,5 +69,7 @@ def test_has_passed_out_of_range_raises_value_error(score):
     ],
 )
 def test_has_passed_invalid_type_raises_type_error(score):
+    # Arrange: invalid-type score comes from the parameters above
+    # Act and Assert: the call must raise TypeError
     with pytest.raises(TypeError):
         has_passed(score)

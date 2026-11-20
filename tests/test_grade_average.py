@@ -1,4 +1,7 @@
 """Unit tests for grade_average.calculate_average.
+
+Each test follows Arrange / Act / Assert (AAA). The Arrange step is the
+input data supplied by @pytest.mark.parametrize.
 """
 import pytest
 
@@ -6,6 +9,17 @@ from src.grade_average import calculate_average
 
 
 # ---------- Valid inputs: correct average (spec 3.1) ----------
+#
+# DEFECT DEF-01 (found by TC-AVG-02, TC-AVG-06, TC-AVG-07)
+#   Requirement: spec 3.1.1 - divide the sum by 2 using ordinary division
+#                and keep any fractional part; do not round down.
+#   Expected:    calculate_average(50, 51) returns 50.5
+#   Actual:      calculate_average(50, 51) returns 50
+#                (likewise 0, 1 -> 0 instead of 0.5; 99, 100 -> 99 instead of 99.5)
+#   Cause:       src/grade_average.py, last line uses floor division:
+#                    return (mark_one + mark_two) // 2
+#                It should use ordinary division: (mark_one + mark_two) / 2
+#   Note:        TC-AVG-01, 03, 04 and 05 pass only because their sums are even.
 
 @pytest.mark.parametrize(
     "mark_one, mark_two, expected",
@@ -20,7 +34,11 @@ from src.grade_average import calculate_average
     ],
 )
 def test_calculate_average_returns_arithmetic_mean(mark_one, mark_two, expected):
-    assert calculate_average(mark_one, mark_two) == expected
+    # Arrange: mark_one, mark_two and expected come from the parameters above
+    # Act
+    result = calculate_average(mark_one, mark_two)
+    # Assert
+    assert result == expected
 
 
 # ---------- Correct type, out of range: ValueError (spec 2.4) ----------
@@ -35,6 +53,8 @@ def test_calculate_average_returns_arithmetic_mean(mark_one, mark_two, expected)
     ],
 )
 def test_calculate_average_out_of_range_raises_value_error(mark_one, mark_two):
+    # Arrange: out-of-range marks come from the parameters above
+    # Act and Assert: the call must raise ValueError
     with pytest.raises(ValueError):
         calculate_average(mark_one, mark_two)
 
@@ -52,5 +72,7 @@ def test_calculate_average_out_of_range_raises_value_error(mark_one, mark_two):
     ],
 )
 def test_calculate_average_invalid_type_raises_type_error(mark_one, mark_two):
+    # Arrange: invalid-type marks come from the parameters above
+    # Act and Assert: the call must raise TypeError
     with pytest.raises(TypeError):
         calculate_average(mark_one, mark_two)
