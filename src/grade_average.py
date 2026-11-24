@@ -7,4 +7,4 @@ def calculate_average(mark_one, mark_two):
         raise ValueError("argument outside permitted range")
 
     return (mark_one + mark_two) // 2
-# / is ordinary division, // is floor division
+
