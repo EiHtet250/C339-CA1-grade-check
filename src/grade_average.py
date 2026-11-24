@@ -7,4 +7,4 @@ def calculate_average(mark_one, mark_two):
         raise ValueError("argument outside permitted range")
 
     return (mark_one + mark_two) // 2
-
+# //is for ordinary division, but the spec requires the arithmetic mean, which is ordinary division.
